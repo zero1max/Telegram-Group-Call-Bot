@@ -4,12 +4,12 @@ from aiogram.client.default import DefaultBotProperties
 from dotenv import load_dotenv
 import os
 
-load_dotenv('.env')
+load_dotenv()
 
-token = os.getenv("BOT_TOKEN")
+TOKEN = os.getenv("BOT_TOKEN")
 
 # db_pro = Database_Product()
 dp = Dispatcher()
 router = Router()
-bot = Bot(token=token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp.include_router(router=router)
