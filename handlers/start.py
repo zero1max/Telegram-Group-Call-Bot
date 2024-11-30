@@ -3,9 +3,12 @@ from aiogram.types import Message, ChatMemberUpdated
 from aiogram.filters import Command, CommandStart
 from loader import router, bot
 from collections import defaultdict
+import random
 
 
 user_data = defaultdict(dict)
+
+emojies = ['💀', '🤖', '👻', '👨🏻‍💻', '🧚🏻‍♀️', '🦁', '🦅', '🐼', '🐻', '🦋', '🦧', '🦦']
 
 @router.message(CommandStart())
 async def start_msg(msg: Message):
