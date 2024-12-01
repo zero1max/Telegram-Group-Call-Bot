@@ -14,15 +14,30 @@ emojies = ['💀', '🤖', '👻', '👨🏻‍💻', '🧚🏻‍♀️', '🦁
 async def start_msg(msg: Message):
     await msg.answer("Salom! Meni guruhga qo'shib administrator qiling va /call buyrug'idan foydalaning.")
 
-# Guruhga yangi foydalanuvchi qo'shilganda ma'lumotni saqlash
 @router.chat_member()
-async def track_new_members(chat_member_update: ChatMemberUpdated):
+async def track_members_and_add_existing(chat_member_update: ChatMemberUpdated, bot: bot):
+    chat_id = chat_member_update.chat.id
+    
+    # Botning o'zi guruhga qo'shilsa, barcha a'zolarni yuklab olish
+    if chat_member_update.new_chat_member.user.id == (await bot.me()).id:
+        await add_all_members(chat_id, bot)
+        return
+
+    # Yangi qo'shilgan foydalanuvchilarni qo'shish
     if chat_member_update.new_chat_member.status in ["member", "administrator"]:
         user = chat_member_update.new_chat_member.user
-        chat_id = chat_member_update.chat.id
         if not user.is_bot:
-            user_data[chat_id][user.id] = user.first_name
-            print(f"Foydalanuvchi qo'shildi: {user.first_name} ({user.id})")
+            name = user.first_name or "NoName"
+            user_data[chat_id][user.id] = name
+            print(f"Yangi foydalanuvchi qo'shildi: {name} ({user.id})")
+
+async def add_all_members(chat_id: int, bot: bot):
+    """Guruhdagi barcha mavjud foydalanuvchilarni ro'yxatga oladi."""
+    async for member in bot.get_chat_administrators(chat_id):
+        if not member.user.is_bot:
+            name = member.user.first_name or "NoName"
+            user_data[chat_id][member.user.id] = name
+            print(f"Mavjud foydalanuvchi qo'shildi: {name} ({member.user.id})")
 
 # Guruhdagi barcha foydalanuvchilarni "mention" qilish
 @router.message(Command("call"))
@@ -34,7 +49,7 @@ async def call_members(msg: Message):
 
     # Foydalanuvchilarni Markdown formatida tayyorlash
     mentions = [
-        f"[{name}](tg://user?id={user_id})"
+        f"[{name}](tg://user?id={user_id})" 
         for user_id, name in user_data[chat_id].items()
     ]
     mention_text = "\n".join(mentions)
