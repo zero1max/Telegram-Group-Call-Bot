@@ -15,7 +15,7 @@ async def start_msg(msg: Message):
     await msg.answer("Salom! Meni guruhga qo'shib administrator qiling va /call buyrug'idan foydalaning.")
 
 @router.chat_member()
-async def track_members_and_add_existing(chat_member_update: ChatMemberUpdated, bot: bot):
+async def track_members_and_add_existing(chat_member_update: ChatMemberUpdated):
     chat_id = chat_member_update.chat.id
     
     # Botning o'zi guruhga qo'shilsa, barcha a'zolarni yuklab olish
@@ -31,7 +31,7 @@ async def track_members_and_add_existing(chat_member_update: ChatMemberUpdated, 
             user_data[chat_id][user.id] = name
             print(f"Yangi foydalanuvchi qo'shildi: {name} ({user.id})")
 
-async def add_all_members(chat_id: int, bot: bot):
+async def add_all_members(chat_id: int):
     """Guruhdagi barcha mavjud foydalanuvchilarni ro'yxatga oladi."""
     async for member in bot.get_chat_administrators(chat_id):
         if not member.user.is_bot:
